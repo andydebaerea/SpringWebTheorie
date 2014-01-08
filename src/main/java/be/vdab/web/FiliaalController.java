@@ -1,9 +1,14 @@
 package be.vdab.web;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,5 +75,34 @@ public class FiliaalController {
 			"id", "naam" })
 	public String deleted() {
 		return "filialen/verwijderd";
+	}
+
+	@RequestMapping(value = "vantotpostcode", method = RequestMethod.GET)
+	public ModelAndView findByPostcodeForm() {
+		return new ModelAndView("filialen/vantotpostcode",
+				"vanTotPostcodeForm", new VanTotPostcodeForm(1000, 9999));
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = { "vanpostcode",
+			"totpostcode" })
+	public ModelAndView findByPostcodeBetween(
+			@Valid VanTotPostcodeForm vanTotPostcodeForm,
+			BindingResult bindingResult) {
+		ModelAndView modelAndView = new ModelAndView("filialen/vantotpostcode");
+		if (!bindingResult.hasErrors() && !vanTotPostcodeForm.isValid()) {
+			bindingResult.reject("fouteVanTotPostcode",
+					new Object[] { vanTotPostcodeForm.getVanpostcode(),
+							vanTotPostcodeForm.getTotpostcode() }, "");
+		}
+		if (!bindingResult.hasErrors()) {
+			modelAndView.addObject("filialen", filiaalService
+					.findByPostcodeBetween(vanTotPostcodeForm.getVanpostcode(),
+							vanTotPostcodeForm.getTotpostcode()));
+		}
+		return modelAndView;
+	}
+
+	@InitBinder("vanTotPostcodeForm")
+	public void initBinderVanTotPostcodeForm(DataBinder dataBinder) {
 	}
 }
