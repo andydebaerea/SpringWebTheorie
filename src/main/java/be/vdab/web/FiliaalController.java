@@ -42,14 +42,27 @@ public class FiliaalController {
 	}
 
 	@RequestMapping(value = "toevoegen", method = RequestMethod.GET)
-	public String createForm() {
-		return "filialen/toevoegen";
+	public ModelAndView createForm() {
+		return new ModelAndView("filialen/toevoegen", "filiaal", new Filiaal());
+	}
+
+	@InitBinder("filiaal")
+	public void initBinderFiliaal(DataBinder dataBinder) {
+		Filiaal filiaal = (Filiaal) dataBinder.getTarget();
+		if (filiaal.getAdres() == null) {
+			filiaal.setAdres(new AdresForm());
+		} else {
+			filiaal.setAdres(new AdresForm(filiaal.getAdres()));
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String create() {
-		logger.info("filiaal record toevoegen aan database");
-		return "redirect:/";
+	public String create(@Valid Filiaal filiaal, BindingResult bindingResult) {
+		if (!bindingResult.hasErrors()) {
+			filiaalService.create(filiaal);
+			return "redirect:/";
+		}
+		return "filialen/toevoegen";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "id")
@@ -104,5 +117,6 @@ public class FiliaalController {
 
 	@InitBinder("vanTotPostcodeForm")
 	public void initBinderVanTotPostcodeForm(DataBinder dataBinder) {
+		dataBinder.initDirectFieldAccess();
 	}
 }
