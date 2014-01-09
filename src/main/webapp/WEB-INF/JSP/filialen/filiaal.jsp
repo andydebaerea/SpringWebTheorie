@@ -7,6 +7,15 @@
 <title>${filiaal.naam}</title>
 <link rel='stylesheet'
 	href='${pageContext.servletContext.contextPath}/styles/default.css'>
+<style>
+form,form input {
+	display: inline; /* de twee forms naast elkaar */
+}
+
+form {
+	margin-right: 5px;
+}
+</style>
 </head>
 <body>
 	<a href="<c:url value='/'/>">Menu</a>
@@ -26,11 +35,11 @@
 				<dd>${filiaal.hoofdFiliaal ? "Hoofdfiliaal" : "Bijfiliaal"}</dd>
 				<dt>Waarde gebouw</dt>
 				<dd>
-					<spring:eval expression='filiaal.waardeGebouw'/>
+					<spring:eval expression='filiaal.waardeGebouw' />
 				</dd>
 				<dt>Ingebruikname</dt>
 				<dd>
-					<spring:eval expression='filiaal.inGebruikName'/>
+					<spring:eval expression='filiaal.inGebruikName' />
 				</dd>
 			</dl>
 			<c:url value='/filialen/verwijderen' var='verwijderURL'>
@@ -43,6 +52,11 @@
 						document.getElementById('verwijderknop').disabled = true;
 					};
 				</script>
+			</form>
+			<c:url value='/filialen/wijzigen' var='wijzigURL' />
+			<form action='${wijzigURL}' method='get'>
+				<input type='hidden' name='id' value='${filiaal.id}'> <input
+					type='submit' value='Wijzigen'>
 			</form>
 		</c:when>
 		<c:otherwise>

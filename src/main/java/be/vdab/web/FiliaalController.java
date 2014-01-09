@@ -119,4 +119,22 @@ public class FiliaalController {
 	public void initBinderVanTotPostcodeForm(DataBinder dataBinder) {
 		dataBinder.initDirectFieldAccess();
 	}
+
+	@RequestMapping(value = "wijzigen", method = RequestMethod.GET)
+	public ModelAndView updateForm(@RequestParam long id) {
+		Filiaal filiaal = filiaalService.read(id);
+		if (filiaal == null) {
+			return new ModelAndView("redirect:/filialen");
+		}
+		return new ModelAndView("filialen/wijzigen", "filiaal", filiaal);
+	}
+
+	@RequestMapping(value = "wijzigen", method = RequestMethod.POST)
+	public String update(@Valid Filiaal filiaal, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return "filialen/wijzigen";
+		}
+		filiaalService.update(filiaal);
+		return "redirect:/";
+	}
 }
