@@ -8,13 +8,22 @@ http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/jee
 http://www.springframework.org/schema/jee/spring-jee.xsd'>
+	<context:property-placeholder location='classpath:/spring/database.properties'
+		ignore-unresolvable='true' />
 	<context:component-scan base-package='be.vdab.dao' />
 	<bean id='dataSource' class='com.mchange.v2.c3p0.ComboPooledDataSource'
 		destroy-method='close'>
-		<property name='driverClass' value='com.mysql.jdbc.Driver' />
-		<property name='jdbcUrl' value='jdbc:mysql://localhost/SpringVDAB' />
-		<property name='user' value='root' />
-		<property name='password' value='vdab' />
-		<property name='maxIdleTime' value='3600' />
+		<property name='driverClass' value='${database.driverClass}' />
+		<property name='jdbcUrl' value='${database.jdbcUrl}' />
+		<property name='user' value='${database.user}' />
+		<property name='password' value='${database.password}' />
+		<property name='maxIdleTime' value='${database.maxIdleTime}' />
+	</bean>
+	<bean id='jdbcTemplate' class='org.springframework.jdbc.core.JdbcTemplate'>
+		<constructor-arg ref='dataSource' />
+	</bean>
+	<bean id='namedParameterJdbcTemplate'
+		class='org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate'>
+		<constructor-arg ref='dataSource' />
 	</bean>
 </beans>

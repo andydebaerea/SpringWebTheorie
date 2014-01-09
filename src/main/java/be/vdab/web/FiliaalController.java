@@ -1,6 +1,7 @@
 package be.vdab.web;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
@@ -20,6 +21,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import be.vdab.entities.Filiaal;
+import be.vdab.exceptions.FiliaalHeeftNogWerknemersException;
+import be.vdab.exceptions.FiliaalMetDezeNaamBestaatAlException;
 import be.vdab.services.FiliaalService;
 
 @Controller
@@ -82,8 +85,11 @@ public class FiliaalController {
 					part.write(filiaalFotosPad + '/' + filiaal.getId() + ".jpg");
 				}
 				return "redirect:/";
-			} catch (Exception ex) {
+			} catch (IOException ex) {
 				logger.error("fouten bij opslaan foto" + ex.getStackTrace());
+			} catch (FiliaalMetDezeNaamBestaatAlException fex) {
+				bindingResult
+						.rejectValue("naam", "filiaalMetDezeNaamBestaatAl");
 			}
 		}
 		return "filialen/toevoegen";
@@ -110,16 +116,24 @@ public class FiliaalController {
 		if (filiaal == null) {
 			return "redirect:/";
 		}
-		filiaalService.delete(id);
-		String filiaalFotoPad = servletContext.getRealPath("/images") + '/'
-				+ filiaal.getId() + ".jpg";
-		File file = new File(filiaalFotoPad);
-		if (file.exists()) {
-			file.delete();
+		try {
+			filiaalService.delete(id);
+			String filiaalFotoPad = servletContext.getRealPath("/images") + '/'
+					+ filiaal.getId() + ".jpg";
+			File file = new File(filiaalFotoPad);
+			if (file.exists()) {
+				file.delete();
+			}
+			redirectAttributes.addAttribute("id", id);
+			redirectAttributes.addAttribute("naam", filiaal.getNaam());
+			return "redirect:/filialen/verwijderd";
+		} catch (FiliaalHeeftNogWerknemersException ex) {
+			redirectAttributes.addAttribute("id", id);
+			redirectAttributes.addAttribute("fout",
+					"Filiaal is niet verwijderd, het bevat nog werknemers");
+			return "redirect:/filialen";
 		}
-		redirectAttributes.addAttribute("id", id);
-		redirectAttributes.addAttribute("naam", filiaal.getNaam());
-		return ("redirect:/filialen/verwijderd");
+
 	}
 
 	@RequestMapping(value = "verwijderd", method = RequestMethod.GET, params = {
@@ -172,7 +186,12 @@ public class FiliaalController {
 		if (bindingResult.hasErrors()) {
 			return "filialen/wijzigen";
 		}
-		filiaalService.update(filiaal);
-		return "redirect:/";
+		try {
+			filiaalService.update(filiaal);
+			return "redirect:/";
+		} catch (FiliaalMetDezeNaamBestaatAlException ex) {
+			bindingResult.rejectValue("naam", "filiaalMetDezeNaamBestaatAl");
+			return "filialen/wijzigen";
+		}
 	}
 }

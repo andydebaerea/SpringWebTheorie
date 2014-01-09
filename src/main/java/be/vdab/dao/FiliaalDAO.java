@@ -16,4 +16,8 @@ public interface FiliaalDAO {
 	Iterable<Filiaal> findByPostcodeBetween(int van, int tot);
 
 	long findAantalFilialen();
+	
+	Filiaal findByNaam(String naam);
+	
+	long findAantalWerknemers(long id);
 }
