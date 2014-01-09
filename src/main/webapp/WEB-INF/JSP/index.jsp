@@ -7,6 +7,13 @@
 <title><fmt:message key='menu' /></title>
 <link rel='stylesheet'
 	href='${pageContext.servletContext.contextPath}/styles/default.css'>
+<c:if test="${not empty kleur}">
+	<style>
+body {
+	background-color: ${kleur};
+}
+</style>
+</c:if>
 </head>
 <body>
 	<nav>
@@ -27,5 +34,15 @@
 		</ul>
 	</nav>
 	<jsp:include page="/WEB-INF/JSP/taalkeuze.jsp"></jsp:include>
+	<c:url var='rozeURL' value='/'>
+		<c:param name='kleur' value='Pink' />
+	</c:url>
+	<c:url var='blauwURL' value='/'>
+		<c:param name='kleur' value='LightBlue' />
+	</c:url>
+	<ul class='zonderbolletjes'>
+		<li><a href='${rozeURL}'><fmt:message key='roze' /></a></li>
+		<li><a href='${blauwURL}'><fmt:message key='blauw' /></a></li>
+	</ul>
 </body>
 </html>

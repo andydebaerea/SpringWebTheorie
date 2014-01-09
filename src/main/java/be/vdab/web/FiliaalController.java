@@ -1,5 +1,9 @@
 package be.vdab.web;
 
+import java.io.File;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.Part;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -21,6 +25,7 @@ import be.vdab.services.FiliaalService;
 @Controller
 @RequestMapping("/filialen")
 public class FiliaalController {
+	private final ServletContext servletContext;
 	private final Logger logger = LoggerFactory
 			.getLogger(FiliaalController.class);
 
@@ -31,8 +36,10 @@ public class FiliaalController {
 	 * met deze annotation injecteert Spring de parameter filiaalService met de
 	 * bean die de interface FiliaalService implementeert
 	 */
-	public FiliaalController(FiliaalService filiaalService) {
+	public FiliaalController(FiliaalService filiaalService,
+			ServletContext servletContext) {
 		this.filiaalService = filiaalService;
+		this.servletContext = servletContext;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -57,18 +64,43 @@ public class FiliaalController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String create(@Valid Filiaal filiaal, BindingResult bindingResult) {
+	public String create(@Valid Filiaal filiaal, BindingResult bindingResult,
+			@RequestParam("foto") Part part) {
+		if (part != null && part.getSize() != 0) {
+			String contentType = part.getContentType();
+			if (!"image/jpg".equals(contentType)
+					&& "image/pjpeg".equals(contentType)) {
+				bindingResult.reject("fotofout");
+			}
+		}
 		if (!bindingResult.hasErrors()) {
-			filiaalService.create(filiaal);
-			return "redirect:/";
+			try {
+				filiaalService.create(filiaal);
+				if (part != null && part.getSize() != 0) {
+					String filiaalFotosPad = servletContext
+							.getRealPath("/images");
+					part.write(filiaalFotosPad + '/' + filiaal.getId() + ".jpg");
+				}
+				return "redirect:/";
+			} catch (Exception ex) {
+				logger.error("fouten bij opslaan foto" + ex.getStackTrace());
+			}
 		}
 		return "filialen/toevoegen";
 	}
 
 	@RequestMapping(method = RequestMethod.GET, params = "id")
 	public ModelAndView read(@RequestParam long id) {
-		return new ModelAndView("filialen/filiaal", "filiaal",
-				filiaalService.read(id));
+		ModelAndView modelAndView = new ModelAndView("filialen/filiaal");
+		Filiaal filiaal = filiaalService.read(id);
+		if (filiaal != null) {
+			modelAndView.addObject("filiaal", filiaal);
+			String filiaalFotoPad = servletContext.getRealPath("/images") + '/'
+					+ filiaal.getId() + ".jpg";
+			File file = new File(filiaalFotoPad);
+			modelAndView.addObject("heeftFoto", file.exists());
+		}
+		return modelAndView;
 	}
 
 	@RequestMapping(value = "verwijderen", method = RequestMethod.POST, params = "id")
@@ -79,6 +111,12 @@ public class FiliaalController {
 			return "redirect:/";
 		}
 		filiaalService.delete(id);
+		String filiaalFotoPad = servletContext.getRealPath("/images") + '/'
+				+ filiaal.getId() + ".jpg";
+		File file = new File(filiaalFotoPad);
+		if (file.exists()) {
+			file.delete();
+		}
 		redirectAttributes.addAttribute("id", id);
 		redirectAttributes.addAttribute("naam", filiaal.getNaam());
 		return ("redirect:/filialen/verwijderd");

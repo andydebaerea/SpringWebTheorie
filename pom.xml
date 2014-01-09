@@ -25,6 +25,10 @@
 		</plugins>
 	</build>
 
+	<properties>
+		<spring.version>[3.2, 3.2.99]</spring.version>
+	</properties>
+
 	<dependencies>
 		<dependency> <!-- gebruik servlets -->
 			<groupId>javax.servlet</groupId>
@@ -51,7 +55,7 @@
 		<dependency> <!-- gebruik Spring MVC -->
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>3.2.3.RELEASE</version>
+			<version>${spring.version}</version>
 			<exclusions>
 				<exclusion> <!-- verouderde logging niet gebruiken -->
 					<artifactId>commons-logging</artifactId>
@@ -97,6 +101,28 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>[4, 4.99]</version>
 		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>[5,]</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>[0,]</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<!-- verwijzing naar de property spring.version: -->
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>

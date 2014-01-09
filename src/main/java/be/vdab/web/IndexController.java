@@ -21,12 +21,14 @@ public class IndexController {
 
 	private final FiliaalService filiaalService;
 	private final LocaleResolver localeResolver;
+	private final Voorkeuren voorkeuren;
 
 	@Autowired
 	public IndexController(FiliaalService filiaalService,
-			LocaleResolver localeResolver) {
+			LocaleResolver localeResolver, Voorkeuren voorkeuren) {
 		this.filiaalService = filiaalService;
 		this.localeResolver = localeResolver;
+		this.voorkeuren = voorkeuren;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -34,6 +36,7 @@ public class IndexController {
 		ModelAndView modelAndView = new ModelAndView("index");
 		modelAndView.addObject("aantalFilialen",
 				filiaalService.findAantalFilialen());
+		modelAndView.addObject("kleur", voorkeuren.getAchtergrondkleur());
 		return modelAndView;
 	}
 
@@ -44,5 +47,15 @@ public class IndexController {
 		localeResolver.setLocale(request, response, new Locale(onderdelen[0],
 				onderdelen[1]));
 		return "redirect:/";
+	}
+
+	@RequestMapping(method = RequestMethod.GET, params = "kleur")
+	public ModelAndView kleurKeuze(@RequestParam String kleur) {
+		voorkeuren.setAchtergrondkleur(kleur);
+		ModelAndView modelAndView = new ModelAndView("index");
+		modelAndView.addObject("aantalFilialen",
+				filiaalService.findAantalFilialen());
+		modelAndView.addObject("kleur", kleur);
+		return modelAndView;
 	}
 }

@@ -41,6 +41,13 @@ form {
 				<dd>
 					<spring:eval expression='filiaal.inGebruikName' />
 				</dd>
+				<c:if test='${heeftFoto}'>
+					<dt>Foto</dt>
+					<dd>
+						<c:url value='/images/${filiaal.id}.jpg' var='fotoURL' />
+						<img src='${fotoURL}' alt='${filiaal.id}'>
+					</dd>
+				</c:if>
 			</dl>
 			<c:url value='/filialen/verwijderen' var='verwijderURL'>
 				<c:param name='id' value='${filiaal.id}' />

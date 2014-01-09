@@ -13,9 +13,11 @@
 	<h1>Filiaal toevoegen</h1>
 	<c:url value='/filialen' var='url' />
 	<form:form action='${url}' method='post' commandName='filiaal'
-		id='toevoegform'>
+		id='toevoegform' enctype='multipart/form-data'>
 		<jsp:include page='filiaalformfields.jsp' />
+		<label>Foto<input type='file' name='foto'></label>
 		<input type='submit' value='Toevoegen' id='toevoegknop'>
+		<form:errors cssClass='fout'/>
 	</form:form>
 	<script>
 		document.getElementById('toevoegform').onsubmit = function() {

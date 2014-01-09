@@ -24,6 +24,7 @@ version='3.0'>
 		<param-value>classpath:/spring/controllers.xml</param-value>
 	</init-param>
 	<load-on-startup>1</load-on-startup>
+	<multipart-config/>
 </servlet>
 
 <servlet-mapping>
@@ -36,5 +37,20 @@ version='3.0'>
 		org.springframework.web.context.ContextLoaderListener
 	</listener-class>
 </listener>
+
+<filter>
+	<filter-name>CharacterEncodingFilter</filter-name>
+	<filter-class>
+		org.springframework.web.filter.CharacterEncodingFilter
+	</filter-class>
+	<init-param>
+		<param-name>encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</init-param>
+</filter>
+<filter-mapping>
+	<filter-name>CharacterEncodingFilter</filter-name>
+	<servlet-name>springDispatcher</servlet-name>
+</filter-mapping>
 
 </web-app>

@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Context>
+	<Resource name='jdbc/SpringVDAB' auth='Container' type='javax.sql.DataSource'
+		username='root' password='vdab'
+		driverClassName='com.mysql.jdbc.Driver' url='jdbc:mysql://localhost/SpringVDAB'
+		factory='org.apache.tomcat.jdbc.pool.DataSourceFactory'
+		validationInterval='60000' testOnBorrow='true' validationQuery='select 1' />
+</Context>
