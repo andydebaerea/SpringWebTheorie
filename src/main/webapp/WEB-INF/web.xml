@@ -53,4 +53,15 @@ version='3.0'>
 	<servlet-name>springDispatcher</servlet-name>
 </filter-mapping>
 
+<filter>
+	<filter-name>OpenEntityManagerInViewFilter</filter-name>
+	<filter-class>
+		org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
+	</filter-class>
+</filter>
+<filter-mapping>
+	<filter-name>OpenEntityManagerInViewFilter</filter-name>
+	<servlet-name>springDispatcher</servlet-name>
+</filter-mapping>
+
 </web-app>

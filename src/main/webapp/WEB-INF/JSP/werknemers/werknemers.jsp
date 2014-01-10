@@ -10,5 +10,21 @@
 <body>
 	<a href="<c:url value='/'/>">Menu</a>
 	<h1>Werknemers</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>Naam</th>
+				<th>Filiaal</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:forEach items='${werknemers}' var='werknemer'>
+				<tr>
+					<td>${werknemer.voornaam}${werknemer.familienaam}</td>
+					<td>${werknemer.filiaal.naam}</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
 </body>
 </html>

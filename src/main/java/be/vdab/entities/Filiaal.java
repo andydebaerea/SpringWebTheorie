@@ -2,8 +2,19 @@ package be.vdab.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
@@ -16,29 +27,39 @@ import org.springframework.format.annotation.NumberFormat.Style;
 
 import be.vdab.valueobjects.Adres;
 
+@Entity
+@Table(name = "filialen")
 public class Filiaal implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue
 	private long id;
-	
+
 	@NotNull
 	@Size(min = 1, max = 50, message = "{Size.tekst}")
 	private String naam;
-	
+
 	private boolean hoofdFiliaal;
-	
+
 	@NumberFormat(style = Style.NUMBER)
 	@NotNull
 	@Min(0)
 	@Digits(integer = 10, fraction = 2)
 	private BigDecimal waardeGebouw;
-	
-	@DateTimeFormat(style= "S-")
+
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(style = "S-")
 	@NotNull
 	private Date inGebruikName;
-	
+
+	@Embedded
 	@Valid
 	private Adres adres;
-	
+
+	@OneToMany(mappedBy = "filiaal")
+	private Set<Werknemer> werknemers;
+
 	public Filiaal() {
 	}
 
@@ -49,6 +70,7 @@ public class Filiaal implements Serializable {
 		setWaardeGebouw(waardeGebouw);
 		setInGebruikName(inGebruikName);
 		setAdres(adres);
+		this.werknemers = new LinkedHashSet<>();
 	}
 
 	public Filiaal(long id, String naam, boolean hoofdFiliaal,
@@ -57,7 +79,6 @@ public class Filiaal implements Serializable {
 		setId(id);
 	}
 
-	
 	public long getId() {
 		return id;
 	}
@@ -105,8 +126,25 @@ public class Filiaal implements Serializable {
 	public void setAdres(Adres adres) {
 		this.adres = adres;
 	}
-	
-	
+
+	public Set<Werknemer> getWerknemers() {
+		return Collections.unmodifiableSet(werknemers);
+	}
+
+	public void addWerknemer(Werknemer werknemer) {
+		werknemers.add(werknemer);
+		if (werknemer.getFiliaal() != this) {
+			werknemer.setFiliaal(this);
+		}
+	}
+
+	public void removeWerknemer(Werknemer werknemer) {
+		if (werknemer.getFiliaal() == this) {
+			werknemers.remove(werknemer);
+			werknemer.setFiliaal(null);
+		}
+	}
+
 	@Override
 	public String toString() {
 		return String.format("%s:%d", naam, id);
