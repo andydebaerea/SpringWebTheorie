@@ -20,13 +20,18 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.NumberFormat;
 import org.springframework.format.annotation.NumberFormat.Style;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import be.vdab.valueobjects.Adres;
 
+@XmlRootElement
 @Entity
 @Table(name = "filialen")
 public class Filiaal implements Serializable {
@@ -58,6 +63,8 @@ public class Filiaal implements Serializable {
 	private Adres adres;
 
 	@OneToMany(mappedBy = "filiaal")
+	@XmlTransient
+	@JsonIgnore
 	private Set<Werknemer> werknemers;
 
 	public Filiaal() {

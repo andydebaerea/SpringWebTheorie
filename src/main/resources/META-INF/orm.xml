@@ -4,6 +4,7 @@
 	xsi:schemaLocation='http://java.sun.com/xml/ns/persistence/orm
 http://java.sun.com/xml/ns/persistence/orm_2_0.xsd'
 	version='2.0'>
+	<!-- 
 	<named-query name='Filiaal.findAll'>
 		<query>
 			select f from Filiaal f order by f.naam
@@ -25,6 +26,7 @@ select count(f) from Filiaal f
 select f from Filiaal f where f.naam = :naam
 </query>
 	</named-query>
+	 -->
 	<named-query name='Werknemer.findMetHoogsteWedde'><!--later in cursus gebruikt -->
 		<query>
 select w from Werknemer w where w.wedde=(select max(wedde) from Werknemer)
