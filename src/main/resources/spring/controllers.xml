@@ -12,6 +12,7 @@ http://www.springframework.org/schema/mvc/spring-mvc.xsd'>
 	<context:component-scan base-package="be.vdab.web" />
 
 	<mvc:view-controller path='/info' view-name='info' />
+	<mvc:view-controller path='/login' view-name='login'/>
 
 	<mvc:resources mapping='/images/**' location='/images/*' />
 	<mvc:resources mapping='/styles/**' location='/styles/*' />
