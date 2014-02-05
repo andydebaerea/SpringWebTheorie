@@ -15,15 +15,17 @@ import be.vdab.valueobjects.Adres;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/spring/dao.xml")
-@Transactional // omringt elke test met een transactie, na de test 
+@Transactional
+// omringt elke test met een transactie, na de test
 public class FiliaalDAOImplTest {
 	@Autowired
 	private FiliaalDAO filiaalDAO;
+
 	@Test
 	public void createFiliaalMetNaamDieNogNietVoorkomt() {
-		Filiaal filiaal=new Filiaal("TestNaam", true, BigDecimal.ONE, new Date(),
-		new Adres("Straat", "HuisNr", 1000, "Gemeente"));
+		Filiaal filiaal = new Filiaal("TestNaam", true, BigDecimal.ONE,
+				new Date(), new Adres("Straat", "HuisNr", 1000, "Gemeente"));
 		filiaalDAO.save(filiaal);
-		}
+	}
 
 }
